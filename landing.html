@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ShortLink | Precision URL Management</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter, Hanken Grotesk, Geist -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=Geist:wght@500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#6ffbbe",
+                    "on-primary-container": "#fefcff",
+                    "surface-container": "#eaedff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#002113",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "secondary-fixed": "#e1e0ff",
+                    "outline-variant": "#c2c6d6",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#dae2fd",
+                    "on-tertiary-container": "#f5fff6",
+                    "tertiary": "#006947",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container-high": "#e2e7ff",
+                    "on-background": "#131b2e",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-dim": "#d2d9f4",
+                    "surface-container-highest": "#dae2fd",
+                    "primary-container": "#2170e4",
+                    "outline": "#727785",
+                    "surface": "#faf8ff",
+                    "inverse-surface": "#283044",
+                    "secondary-container": "#6063ee",
+                    "on-surface-variant": "#424754",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#005ac2",
+                    "secondary": "#4648d4",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#00855b",
+                    "on-surface": "#131b2e",
+                    "on-primary-fixed-variant": "#004395",
+                    "primary-fixed": "#d8e2ff",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "primary": "#0058be",
+                    "surface-bright": "#faf8ff",
+                    "on-secondary-container": "#fffbff",
+                    "background": "#faf8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "label-md": ["Geist"],
+                    "headline-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, rgba(33, 112, 228, 0.05) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<!-- TopNavBar Component -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 docked full-width top-0 sticky z-50 backdrop-blur-xl border-b border-outline-variant dark:border-outline flat no shadows transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<a class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary" href="#">ShortLink</a>
+<nav class="hidden md:flex gap-6">
+<a class="font-body-md text-body-md text-primary dark:text-inverse-primary font-bold border-b-2 border-primary hover:scale-105 transition-transform duration-200" href="#">Platform</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary hover:scale-105 transition-transform duration-200" href="#">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary hover:scale-105 transition-transform duration-200" href="#">Analytics</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-surface-variant hover:text-primary hover:scale-105 transition-transform duration-200" href="#">Resources</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors">Log In</button>
+<button class="bg-primary-container text-on-primary-container px-6 py-2 rounded-lg font-bold hover:scale-105 transition-transform duration-200">Get Started</button>
+</div>
+</div>
+</header>
+<main class="relative overflow-hidden">
+<!-- Hero Section: The "Shorten" Bar focus -->
+<section class="hero-gradient relative pt-20 pb-32 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto text-center space-y-12">
+<div class="space-y-6">
+<h1 class="font-display-lg text-display-lg md:text-display-lg text-on-surface max-w-3xl mx-auto">
+                        Make every connection <span class="text-primary">count</span>.
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+                        A precision-engineered platform for high-performance URL management, detailed analytics, and custom brand identity.
+                    </p>
+</div>
+<!-- Input Area: Negative Space Layout -->
+<div class="max-w-3xl mx-auto mt-20 relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition duration-1000"></div>
+<div class="relative bg-surface-container-lowest border border-outline-variant p-2 rounded-2xl flex flex-col md:flex-row items-stretch gap-2 transition-all duration-300 shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-4">
+<div class="flex-grow flex items-center px-4 py-3 md:py-0">
+<span class="material-symbols-outlined text-outline mr-3" data-icon="link">link</span>
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-lg text-body-lg placeholder:text-outline-variant outline-none" placeholder="Paste a long URL" type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
+                            Shorten
+                            <span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</button>
+</div>
+</div>
+<!-- Trust Badges / Social Proof -->
+<div class="pt-16 animate-fade-in">
+<p class="font-label-sm text-label-sm text-outline mb-8 uppercase tracking-widest">Trusted by 50,000+ creators and brands</p>
+<div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+<div class="h-8 w-24 bg-on-surface-variant/20 rounded"></div>
+<div class="h-8 w-32 bg-on-surface-variant/20 rounded"></div>
+<div class="h-8 w-28 bg-on-surface-variant/20 rounded"></div>
+<div class="h-8 w-24 bg-on-surface-variant/20 rounded"></div>
+<div class="h-8 w-36 bg-on-surface-variant/20 rounded"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Features Bento Grid -->
+<section class="py-24 bg-surface-container-low px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Feature 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant hover:border-primary transition-colors duration-300 group">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="query_stats" data-weight="fill">query_stats</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Real-time Analytics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Track clicks, geographic data, and referral sources in real-time. Gain deep insights into how your audience interacts with your links.
+                        </p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant hover:border-primary transition-colors duration-300 group">
+<div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-6 text-secondary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="domain" data-weight="fill">domain</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Custom Domains</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Maintain brand consistency by using your own domain name. Transform generic links into recognizable branded assets.
+                        </p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-3xl border border-outline-variant hover:border-primary transition-colors duration-300 group">
+<div class="w-12 h-12 bg-tertiary-container/10 rounded-xl flex items-center justify-center mb-6 text-tertiary-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="api" data-weight="fill">api</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">API Access</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                            Scale your workflows with our robust API. Integrate shortening directly into your product or internal marketing automation.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Dynamic Visualization Section (Bento Inspired) -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Large Image Card -->
+<div class="md:col-span-8 h-[500px] rounded-3xl overflow-hidden relative group">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A futuristic, high-tech dashboard interface showing real-time global link click data on a dark map. The aesthetic is clean and sleek, featuring neon electric blue lines and data visualizations like bar charts and heat maps. The mood is professional and data-driven, perfectly reflecting a premium URL management tool's analytics capability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9jKwfoNoDh7M0aRqvc1DnlbjXAXXtuY9DzQLEFpv8vAJTOhEToAFPNCOzWO-jY3GL--W5SgOPTEJxC_V_HzgRSimeD58h8hxqVToixsiCPGJjWdR7Dv8LqXg963sMJg6nWJwRrt_BITdTsektOA27SCeh1nvgBNyY2AFMSr7aIlWHfvwvsQ3T3SHis9QSaT2uv-0FKgqO7UKbTugK5VC_bt7D6JwZ7nsgzBZt4Us91dH2OYFpjhQQL6ekrWHXo10oMLmRsbL5fU4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-10">
+<span class="font-label-sm text-label-sm text-white/80 uppercase mb-2">Live Insights</span>
+<h2 class="font-headline-md text-headline-md text-white">Understand your audience like never before.</h2>
+</div>
+</div>
+<!-- Small Floating Card -->
+<div class="md:col-span-4 space-y-gutter">
+<div class="bg-primary p-8 rounded-3xl text-on-primary h-[238px] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl" data-icon="security" data-weight="fill">security</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm mb-2">Enterprise Security</h4>
+<p class="font-body-md text-body-md opacity-90">SSO, 2FA, and granular permissions for team safety.</p>
+</div>
+</div>
+<div class="bg-tertiary-fixed p-8 rounded-3xl text-on-tertiary-fixed h-[238px] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl" data-icon="speed" data-weight="fill">speed</span>
+<div>
+<h4 class="font-headline-sm text-headline-sm mb-2">Global Edge</h4>
+<p class="font-body-md text-body-md opacity-90">Redirects delivered via 200+ edge locations globally.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-margin-mobile md:px-margin-desktop text-center bg-inverse-surface text-inverse-on-surface rounded-t-[4rem]">
+<div class="max-w-2xl mx-auto space-y-8">
+<h2 class="font-display-lg text-display-lg">Ready to optimize your links?</h2>
+<p class="font-body-lg text-body-lg opacity-80">Join thousands of businesses already scaling their reach with ShortLink.</p>
+<div class="flex flex-col md:flex-row items-center justify-center gap-4">
+<button class="w-full md:w-auto bg-primary-container text-on-primary-container px-10 py-4 rounded-xl font-headline-sm hover:scale-105 transition-transform">Get Started Free</button>
+<button class="w-full md:w-auto border border-outline text-inverse-on-surface px-10 py-4 rounded-xl font-headline-sm hover:bg-white/5 transition-colors">Book a Demo</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-container dark:bg-surface-container-highest w-full py-10 mt-0 border-t border-outline-variant dark:border-outline flat no shadows">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-2 md:col-span-1 space-y-4">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">ShortLink</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant max-w-xs">
+                    Building the infrastructure for modern, branded connections across the web.
+                </p>
+</div>
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-primary font-bold">Product</h4>
+<ul class="space-y-2">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Features</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Pricing</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Analytics</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-primary font-bold">Resources</h4>
+<ul class="space-y-2">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">API Docs</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Security</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Status</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-primary font-bold">Company</h4>
+<ul class="space-y-2">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-container-max mx-auto px-margin-desktop mt-16 pt-8 border-t border-outline-variant/30 flex justify-between items-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">© 2024 ShortLink Inc. All rights reserved.</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="public">public</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-primary cursor-pointer transition-colors" data-icon="alternate_email">alternate_email</span>
+</div>
+</div>
+</footer>
+<script>
+        // Micro-interactions for the input field
+        const shortenBtn = document.querySelector('button.bg-primary');
+        const urlInput = document.querySelector('input');
+
+        shortenBtn.addEventListener('click', () => {
+            if (urlInput.value) {
+                shortenBtn.innerHTML = `Shortening... <span class="material-symbols-outlined animate-spin" data-icon="refresh">refresh</span>`;
+                setTimeout(() => {
+                    shortenBtn.innerHTML = `Copied! <span class="material-symbols-outlined" data-icon="check">check</span>`;
+                    shortenBtn.classList.replace('bg-primary', 'bg-tertiary-container');
+                    urlInput.value = "shrt.lnk/v8k2pX";
+                    
+                    setTimeout(() => {
+                        shortenBtn.innerHTML = `Shorten <span class="material-symbols-outlined" data-icon="bolt">bolt</span>`;
+                        shortenBtn.classList.replace('bg-tertiary-container', 'bg-primary');
+                    }, 3000);
+                }, 1000);
+            }
+        });
+
+        // Simple Fade-in Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.grid > div').forEach(card => {
+            card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

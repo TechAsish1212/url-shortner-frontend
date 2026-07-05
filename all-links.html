@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ShortLink | Manage Links</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Geist:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#6ffbbe",
+                    "on-primary-container": "#fefcff",
+                    "surface-container": "#eaedff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#002113",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "secondary-fixed": "#e1e0ff",
+                    "outline-variant": "#c2c6d6",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#dae2fd",
+                    "on-tertiary-container": "#f5fff6",
+                    "tertiary": "#006947",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container-high": "#e2e7ff",
+                    "on-background": "#131b2e",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-dim": "#d2d9f4",
+                    "surface-container-highest": "#dae2fd",
+                    "primary-container": "#2170e4",
+                    "outline": "#727785",
+                    "surface": "#faf8ff",
+                    "inverse-surface": "#283044",
+                    "secondary-container": "#6063ee",
+                    "on-surface-variant": "#424754",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#005ac2",
+                    "secondary": "#4648d4",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#00855b",
+                    "on-surface": "#131b2e",
+                    "on-primary-fixed-variant": "#004395",
+                    "primary-fixed": "#d8e2ff",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "primary": "#0058be",
+                    "surface-bright": "#faf8ff",
+                    "on-secondary-container": "#fffbff",
+                    "background": "#faf8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "label-md": ["Geist"],
+                    "headline-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-nav {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .link-row:hover {
+            box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- SideNavBar (Authority: JSON & Contextual Mapping) -->
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant flex flex-col py-base px-4 z-40 hidden md:flex">
+<div class="mb-10 px-2 pt-4">
+<h1 class="font-headline-sm text-headline-sm font-extrabold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="link">link</span>
+                ShortLink
+            </h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70 px-8">Pro Workspace</p>
+</div>
+<nav class="flex-grow space-y-1">
+<!-- Navigation items from JSON -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active State: "My Links" maps to the current page "Links Management" -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-lg font-bold font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="link" style="font-variation-settings: 'FILL' 1;">link</span>
+                My Links
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+                Analytics
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="mt-auto space-y-1 pb-4">
+<button class="w-full bg-primary text-on-primary font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 mb-6 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Create New Link
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+                API Docs
+            </a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 p-margin-mobile md:p-margin-desktop min-h-screen">
+<!-- Header & Action Bar -->
+<header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-background">Detailed Links</h2>
+<p class="text-on-surface-variant font-body-md">Manage and track your 12 active short links.</p>
+</div>
+<div class="flex gap-2 w-full md:w-auto">
+<div class="relative flex-grow md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all font-body-md" placeholder="Search links..." type="text"/>
+</div>
+<button class="p-2 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="filter_list">filter_list</span>
+</button>
+</div>
+</header>
+<!-- Stats Overview (Minimalist Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-10">
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Total Clicks</p>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-background">42.8k</h3>
+</div>
+<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Active Links</p>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-background">12</h3>
+</div>
+<div class="w-12 h-12 bg-tertiary-container rounded-full flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" data-icon="link">link</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex items-center justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Avg. CTR</p>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-background">8.4%</h3>
+</div>
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="ads_click">ads_click</span>
+</div>
+</div>
+</div>
+<!-- Links Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Created Date</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Short Link</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Original URL</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Clicks</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-center">Status</th>
+<th class="px-6 py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="link-row transition-all duration-200">
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">Oct 24, 2024</td>
+<td class="px-6 py-4">
+<span class="font-body-md font-bold text-primary">short.lk/campaign24</span>
+</td>
+<td class="px-6 py-4">
+<div class="max-w-[200px] truncate text-on-surface-variant font-body-md" title="https://marketing.enterprise.com/winter-sale/landing-page-v2">https://marketing.enterprise.com/winter-sale/landing-page-v2</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md font-bold">12,402</span>
+<span class="text-[10px] text-tertiary font-bold">+12%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-[12px] font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/5 rounded-lg transition-colors group" onclick="showToast()" title="Copy Link">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" title="Analytics">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="link-row transition-all duration-200">
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">Oct 21, 2024</td>
+<td class="px-6 py-4">
+<span class="font-body-md font-bold text-primary">short.lk/bio-link</span>
+</td>
+<td class="px-6 py-4">
+<div class="max-w-[200px] truncate text-on-surface-variant font-body-md">https://instagr.am/u/johndoe_official</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md font-bold">8,912</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-[12px] font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Copy Link">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" title="Analytics">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 (Expired) -->
+<tr class="link-row transition-all duration-200 bg-surface-container-low/30">
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">Sep 15, 2024</td>
+<td class="px-6 py-4">
+<span class="font-body-md font-bold text-on-surface-variant/60">short.lk/summer-promo</span>
+</td>
+<td class="px-6 py-4">
+<div class="max-w-[200px] truncate text-on-surface-variant/60 font-body-md">https://store.myshop.com/seasonal/summer2024</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md font-bold text-on-surface-variant/60">5,430</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 bg-outline-variant/20 text-on-surface-variant/60 rounded-full text-[12px] font-bold">Expired</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-on-surface-variant/60 hover:bg-surface-container-high rounded-lg transition-colors" title="Copy Link">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-2 text-on-surface-variant/60 hover:bg-surface-container-high rounded-lg transition-colors" title="Analytics">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="link-row transition-all duration-200">
+<td class="px-6 py-4 font-label-sm text-label-sm text-on-surface-variant">Oct 10, 2024</td>
+<td class="px-6 py-4">
+<span class="font-body-md font-bold text-primary">short.lk/webinar-reg</span>
+</td>
+<td class="px-6 py-4">
+<div class="max-w-[200px] truncate text-on-surface-variant font-body-md">https://zoom.us/webinar/register/WN_abc123xyz</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="font-label-md font-bold">2,105</span>
+<span class="text-[10px] text-tertiary font-bold">+5%</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary rounded-full text-[12px] font-bold">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex justify-end gap-2">
+<button class="p-2 text-primary hover:bg-primary/5 rounded-lg transition-colors" title="Copy Link">
+<span class="material-symbols-outlined" data-icon="content_copy">content_copy</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-colors" title="Analytics">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Showing 1 to 4 of 12 links</span>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md text-on-surface-variant opacity-50 cursor-not-allowed">Previous</button>
+<button class="px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md text-on-surface-variant hover:bg-primary hover:text-on-primary transition-all">Next</button>
+</div>
+</div>
+</div>
+<!-- Dashboard FAB (Conditional Rendering logic applied) -->
+<!-- Suppressed on detailed list views as per UX guidelines in prompt instructions -->
+</main>
+<!-- Footer (Authority: JSON) -->
+<footer class="md:ml-64 bg-surface-container py-10 mt-20 border-t border-outline-variant">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-2">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-4">ShortLink</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant max-w-xs mb-4">
+                    The modern standard for URL management. Built for speed, accuracy, and enterprise-grade security.
+                </p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 ShortLink Inc. All rights reserved.</p>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-on-surface font-bold mb-4">Product</h5>
+<ul class="space-y-2">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Privacy Policy</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Terms of Service</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Security</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md text-on-surface font-bold mb-4">Developers</h5>
+<ul class="space-y-2">
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">API</a></li>
+<li><a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-opacity" href="#">Status</a></li>
+</ul>
+</div>
+</div>
+</footer>
+<!-- Copy Success Toast (Mini Interaction) -->
+<div class="fixed bottom-8 right-8 bg-tertiary-container text-on-tertiary-container px-6 py-3 rounded-full shadow-lg transform translate-y-24 transition-transform duration-300 flex items-center gap-2 font-bold font-label-md" id="toast">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+        Link copied to clipboard!
+    </div>
+<script>
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.remove('translate-y-24');
+            toast.classList.add('translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0');
+                toast.classList.add('translate-y-24');
+            }, 3000);
+        }
+
+        // Search highlight mock logic
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const rows = document.querySelectorAll('.link-row');
+            const term = e.target.value.toLowerCase();
+            
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+    </script>
+</body></html>

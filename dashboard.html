@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ShortLink Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=Geist:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=Hanken+Grotesk:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary": "#ffffff",
+                    "tertiary-fixed": "#6ffbbe",
+                    "on-primary-container": "#fefcff",
+                    "surface-container": "#eaedff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#002113",
+                    "on-tertiary-fixed-variant": "#005236",
+                    "secondary-fixed": "#e1e0ff",
+                    "outline-variant": "#c2c6d6",
+                    "primary-fixed-dim": "#adc6ff",
+                    "inverse-on-surface": "#eef0ff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#dae2fd",
+                    "on-tertiary-container": "#f5fff6",
+                    "tertiary": "#006947",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#001a42",
+                    "surface-container-high": "#e2e7ff",
+                    "on-background": "#131b2e",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-dim": "#d2d9f4",
+                    "surface-container-highest": "#dae2fd",
+                    "primary-container": "#2170e4",
+                    "outline": "#727785",
+                    "surface": "#faf8ff",
+                    "inverse-surface": "#283044",
+                    "secondary-container": "#6063ee",
+                    "on-surface-variant": "#424754",
+                    "error": "#ba1a1a",
+                    "surface-tint": "#005ac2",
+                    "secondary": "#4648d4",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-fixed-dim": "#4edea3",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-container": "#00855b",
+                    "on-surface": "#131b2e",
+                    "on-primary-fixed-variant": "#004395",
+                    "primary-fixed": "#d8e2ff",
+                    "on-error": "#ffffff",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary": "#ffffff",
+                    "primary": "#0058be",
+                    "surface-bright": "#faf8ff",
+                    "on-secondary-container": "#fffbff",
+                    "background": "#faf8ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "base": "8px",
+                    "gutter": "24px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "label-md": ["Geist"],
+                    "headline-sm": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Geist"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-md": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        .link-row:hover .copy-btn {
+            opacity: 1;
+        }
+        .sparkline {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 2s ease-in-out forwards;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+<!-- SideNavBar (Desktop) -->
+<aside class="hidden md:flex flex-col py-base px-4 h-screen w-64 fixed left-0 top-0 bg-surface border-r border-outline-variant z-50">
+<div class="mb-10 px-2">
+<h1 class="font-headline-sm text-headline-sm font-extrabold text-primary">ShortLink</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Pro Workspace</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 bg-primary-container text-on-primary-container rounded-lg font-bold transition-transform active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="link">link</span>
+<span class="font-label-md text-label-md">My Links</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-label-md text-label-md">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-outline-variant space-y-1">
+<button class="w-full mb-6 py-3 px-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] transition-transform shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Create New Link
+            </button>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-label-md text-label-md">API Docs</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 min-h-screen">
+<!-- TopNavBar -->
+<header class="docked full-width top-0 sticky z-40 glass-header border-b border-outline-variant">
+<div class="flex justify-between items-center h-16 px-margin-desktop max-w-container-max mx-auto">
+<div class="md:hidden">
+<span class="font-headline-md text-headline-md font-bold text-primary">ShortLink</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary" href="#">Platform</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-transform hover:scale-105" href="#">Pricing</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-transform hover:scale-105" href="#">Analytics</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-transform hover:scale-105" href="#">Resources</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container rounded-full">search</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional studio portrait of a young tech executive with a friendly smile, set against a clean, minimalist light gray background. The lighting is soft and directional, emphasizing clarity and approachability. The aesthetic is clean-cut and corporate, matching a high-end software platform's professional atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaU2uZWE6065aaEUKpuKXFjlil61gT1nOV9p-9HWX8MX2YPp0sV_Y8cRSdjDqN-K3D8g190iEQ4iVkKIxLA5ehshFatGBGC9LL-lnan0l1MzEOU8xmxoH9Z1hUueBNMIdhim4PDWIKm4AbAG7Ne49S8KSwO37ABxuHn_QK4Km3vnv42ZraI0epRcgCzzg8XF7y2_RJQsopx0-oEInvaXBAPI258GG0bmthldteSQ8QjSR3Db6AaWKXFQfmX9rbpiXeWjAESNFHz5I"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Hero / Stats -->
+<section class="px-margin-mobile md:px-margin-desktop py-12 max-w-container-max mx-auto">
+<div class="mb-12">
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-2">Welcome back, Alex.</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg">Here's what's happening with your workspace today.</p>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-16">
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="z-10">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Total Clicks</p>
+<p class="font-display-lg text-display-lg text-primary">42,891</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]" data-icon="ads_click">ads_click</span>
+</div>
+<div class="flex items-center gap-2 text-tertiary font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-sm">+12% from last week</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant flex flex-col justify-between h-48 relative overflow-hidden group">
+<div class="z-10">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Active Links</p>
+<p class="font-display-lg text-display-lg text-secondary">854</p>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[120px]" data-icon="link">link</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant font-bold">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-sm">All systems operational</span>
+</div>
+</div>
+<div class="bg-primary-container p-8 rounded-xl border border-primary text-on-primary-container flex flex-col justify-center h-48 relative overflow-hidden shadow-lg shadow-primary/20">
+
+<div class="relative z-10">
+<p class="font-headline-sm text-headline-sm mb-2">Grow your reach</p>
+<p class="text-sm mb-4 opacity-90">Upgrade to Pro for custom domains and advanced deep linking.</p>
+<button class="bg-surface-container-lowest text-primary font-bold py-2 px-4 rounded-lg text-sm hover:scale-105 transition-transform">Explore Plans</button>
+</div>
+</div>
+</div>
+<!-- Recent Links Section -->
+<div class="mb-8 flex items-center justify-between">
+<h3 class="font-headline-sm text-headline-sm">Recent Links</h3>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+                    View all links <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<!-- Header -->
+<div class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 border-b border-outline-variant bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant uppercase">
+<div class="col-span-5">Link Details</div>
+<div class="col-span-3 text-center">Shortened</div>
+<div class="col-span-2 text-center">Activity</div>
+<div class="col-span-2 text-right">Actions</div>
+</div>
+<!-- Link Items -->
+<div class="divide-y divide-outline-variant">
+<!-- Item 1 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 items-center link-row group hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-5 flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Product Launch Campaign 2024</span>
+<span class="text-sm text-on-surface-variant truncate">https://marketing.acme.com/campaigns/summer-release/utm_source=twitter&amp;utm_medium=social</span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="bg-secondary-container/10 text-secondary px-3 py-1.5 rounded-lg font-label-md text-label-md flex items-center gap-2 group-hover:bg-secondary-container/20">
+<span>shrt.lnk/summer24</span>
+<button class="copy-btn opacity-0 transition-opacity material-symbols-outlined text-base">content_copy</button>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<svg class="w-24 h-8" viewbox="0 0 100 40">
+<path class="text-tertiary sparkline" d="M0 35 Q 20 10, 40 25 T 80 5 T 100 15" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="col-span-2 flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">bar_chart</button>
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">edit</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 items-center link-row group hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-5 flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Internal Q4 Documentation</span>
+<span class="text-sm text-on-surface-variant truncate">https://docs.google.com/spreadsheets/d/1vP9fA2-internal-resource-key-9283</span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="bg-secondary-container/10 text-secondary px-3 py-1.5 rounded-lg font-label-md text-label-md flex items-center gap-2">
+<span>shrt.lnk/q4docs</span>
+<button class="copy-btn opacity-0 transition-opacity material-symbols-outlined text-base">content_copy</button>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<svg class="w-24 h-8" viewbox="0 0 100 40">
+<path class="text-on-surface-variant sparkline" d="M0 20 Q 20 30, 50 15 T 100 35" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="col-span-2 flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">bar_chart</button>
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">edit</button>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 items-center link-row group hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-5 flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Referral Program Link</span>
+<span class="text-sm text-on-surface-variant truncate">https://app.shortlink.com/invite?user=alex_99&amp;code=REFPRGM22</span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="bg-secondary-container/10 text-secondary px-3 py-1.5 rounded-lg font-label-md text-label-md flex items-center gap-2">
+<span>shrt.lnk/refer-alex</span>
+<button class="copy-btn opacity-0 transition-opacity material-symbols-outlined text-base">content_copy</button>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<svg class="w-24 h-8" viewbox="0 0 100 40">
+<path class="text-tertiary sparkline" d="M0 38 L 20 30 L 40 32 L 60 10 L 80 15 L 100 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="col-span-2 flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">bar_chart</button>
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">edit</button>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 items-center link-row group hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-5 flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Customer Support Ticket Auto-Reply</span>
+<span class="text-sm text-on-surface-variant truncate">https://help.acme.com/kb/article/how-to-fix-everything-instantly</span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="bg-secondary-container/10 text-secondary px-3 py-1.5 rounded-lg font-label-md text-label-md flex items-center gap-2">
+<span>shrt.lnk/fix-it</span>
+<button class="copy-btn opacity-0 transition-opacity material-symbols-outlined text-base">content_copy</button>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<svg class="w-24 h-8" viewbox="0 0 100 40">
+<path class="text-error sparkline" d="M0 5 Q 30 5, 50 20 T 100 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="col-span-2 flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">bar_chart</button>
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">edit</button>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-5 items-center link-row group hover:bg-surface-container-low/50 transition-colors">
+<div class="col-span-5 flex flex-col">
+<span class="font-body-md text-body-md font-semibold text-on-surface truncate">Latest Podcast Episode</span>
+<span class="text-sm text-on-surface-variant truncate">https://spotify.com/episodes/928374/shortlink-deep-dive-into-metrics</span>
+</div>
+<div class="col-span-3 flex justify-center">
+<div class="bg-secondary-container/10 text-secondary px-3 py-1.5 rounded-lg font-label-md text-label-md flex items-center gap-2">
+<span>shrt.lnk/podcast</span>
+<button class="copy-btn opacity-0 transition-opacity material-symbols-outlined text-base">content_copy</button>
+</div>
+</div>
+<div class="col-span-2 flex justify-center">
+<svg class="w-24 h-8" viewbox="0 0 100 40">
+<path class="text-tertiary sparkline" d="M0 35 L 100 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<div class="col-span-2 flex justify-end gap-2">
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">bar_chart</button>
+<button class="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant">edit</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="w-full py-10 mt-20 border-t border-outline-variant bg-surface-container">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter px-margin-desktop max-w-container-max mx-auto">
+<div class="col-span-2 md:col-span-1">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">ShortLink</span>
+<p class="mt-4 text-on-surface-variant font-label-sm text-label-sm">© 2024 ShortLink Inc. All rights reserved.</p>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-bold text-on-surface mb-2">Product</span>
+<a class="text-on-surface-variant hover:text-primary transition-opacity font-label-sm text-label-sm" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant hover:text-primary transition-opacity font-label-sm text-label-sm" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-bold text-on-surface mb-2">Support</span>
+<a class="text-on-surface-variant hover:text-primary transition-opacity font-label-sm text-label-sm" href="#">Security</a>
+<a class="text-on-surface-variant hover:text-primary transition-opacity font-label-sm text-label-sm" href="#">Status</a>
+</div>
+<div class="flex flex-col gap-2">
+<span class="font-bold text-on-surface mb-2">Devs</span>
+<a class="text-on-surface-variant hover:text-primary transition-opacity font-label-sm text-label-sm" href="#">API</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button (Mobile) -->
+<button class="md:hidden fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-surface border-t border-outline-variant flex items-center justify-around px-4 z-50">
+<a class="flex flex-col items-center text-primary font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">Dashboard</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="link">link</span>
+<span class="text-[10px]">Links</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="text-[10px]">Analytics</span>
+</a>
+<a class="flex flex-col items-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px]">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for copy buttons
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const originalIcon = btn.innerText;
+                btn.innerText = 'check';
+                btn.classList.add('text-tertiary');
+                
+                // Show a toast or feedback (simplified)
+                const linkText = btn.previousElementSibling.innerText;
+                console.log('Copied:', linkText);
+
+                setTimeout(() => {
+                    btn.innerText = originalIcon;
+                    btn.classList.remove('text-tertiary');
+                }, 2000);
+            });
+        });
+
+        // Simple scroll animation for the header glass effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm');
+            } else {
+                header.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body></html>
