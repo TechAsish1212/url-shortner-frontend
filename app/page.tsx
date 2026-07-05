@@ -5,6 +5,7 @@ import MarketingHeader from "@/app/components/MarketingHeader";
 import { useLinkState } from "@/app/lib/state";
 import Link from "next/link";
 import { AppleIcon, Building2, ChartNoAxesCombined, Link2, LinkIcon, Zap } from "lucide-react";
+import { MdSecurity, MdSpeed } from "react-icons/md";
 
 export default function Home() {
   const { shortenLink, showToast } = useLinkState();
@@ -182,7 +183,7 @@ export default function Home() {
             {/* Small Floating Card */}
             <div className="md:col-span-4 flex flex-col gap-gutter">
               <div className="bg-primary p-8 rounded-3xl text-on-primary flex-1 flex flex-col justify-between shadow-lg shadow-primary/10">
-                <span className="material-symbols-outlined text-4xl">security</span>
+                <span className="material-symbols-outlined text-4xl"><MdSecurity/></span>
                 <div className="mt-8">
                   <h4 className="font-headline-sm text-headline-sm mb-2 font-bold">Enterprise Security</h4>
                   <p className="font-body-md text-body-md opacity-90 leading-relaxed">
@@ -191,7 +192,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="bg-tertiary-fixed p-8 rounded-3xl text-on-tertiary-fixed flex-1 flex flex-col justify-between shadow-lg shadow-tertiary-fixed/10">
-                <span className="material-symbols-outlined text-4xl">speed</span>
+                <span className="material-symbols-outlined text-4xl"><MdSpeed/></span>
                 <div className="mt-8">
                   <h4 className="font-headline-sm text-headline-sm mb-2 font-bold">Global Edge</h4>
                   <p className="font-body-md text-body-md opacity-90 leading-relaxed">
