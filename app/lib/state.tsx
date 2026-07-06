@@ -19,6 +19,7 @@ export interface UserProfile {
   handle: string;
   email: string;
   avatarUrl: string;
+  plan:string;
 }
 
 export interface ApiKey {
@@ -110,6 +111,7 @@ const defaultProfile: UserProfile = {
   handle: "arivera",
   email: "alex.rivera@workspace.io",
   avatarUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuCwOjnFedqEN5unMAvyLWtitiCNuO2FfNjsauQrBfaju3AuYsJPU1OzwGTVqm1CVX9ffKDnoKA8v-c9Y_JDOsefvU0HtLDQLl4KQjt8P1mZDPis5D7bjInYUI_E6emIkRm4UVXtk4430PonbMwa2WQxEUOSb6bDdFebSJZN2aSdN4gU4gRrpWnrOMV745c2l29hP1lDHjMOqIUq2t9y2e2z4H1VlVszPwawzE5-WdwRME5RSP5aQUL3dxQJOtM5lgN7_CIQ20EtOGo",
+  plan: "Free Plan",
 };
 
 const defaultDomains: string[] = ["go.rivera.io"];
@@ -118,7 +120,7 @@ const defaultApiKeys: ApiKey[] = [
   {
     id: "prod",
     name: "Production Key",
-    key: "sk_live_4a1c58d04ee8d0113a9b",
+    key: "cx_live_4a1c58d04ee8d0113a9b",
   },
 ];
 
@@ -265,7 +267,7 @@ export function LinkStateProvider({ children }: { children: React.ReactNode }) {
     const randomHex = Array.from({ length: 20 }, () =>
       Math.floor(Math.random() * 16).toString(16)
     ).join("");
-    const newKey = `sk_live_${randomHex}`;
+    const newKey = `cx_live_${randomHex}`;
 
     setApiKeys((prev) =>
       prev.map((key) => (key.id === id ? { ...key, key: newKey } : key))
@@ -288,7 +290,8 @@ export function LinkStateProvider({ children }: { children: React.ReactNode }) {
         name: capitalized,
         handle: namePart.toLowerCase(),
         email: email,
-        avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${namePart}`
+        avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${namePart}`,
+        plan: "Free Plan",
       });
     }
 
@@ -309,7 +312,8 @@ export function LinkStateProvider({ children }: { children: React.ReactNode }) {
       name,
       handle,
       email,
-      avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${handle}`
+      avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${handle}`,
+      plan: "Free Plan"
     };
 
     setProfile(newProfile);

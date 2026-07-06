@@ -3,22 +3,23 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Link2 } from "lucide-react";
+import ProfileDropdown from "./ProfileDropdown";
+import { useLinkState } from "../lib/state";
 
 const NAV_ITEMS = [
   { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Blogs", href: "/blogs" },
   { label: "Developers", href: "/developers" },
-
 ];
 
 export default function MarketingHeader() {
   const pathname = usePathname();
+  const { profile, isAuthenticated } = useLinkState();
 
-  const isAuth = pathname === "/login" || pathname === "/signup";
-  if (pathname.startsWith("/dashboard") || isAuth) {
-    return null;
-  }
+ if (pathname.startsWith("/dashboard")) {
+  return null;
+}
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface/95 backdrop-blur">
@@ -62,19 +63,25 @@ export default function MarketingHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="font-semibold text-on-surface-variant transition-colors hover:text-primary"
-          >
-            Log In
-          </Link>
+          {!isAuthenticated ? (
+            <>
+              <Link
+                href="/login"
+                className="font-semibold text-on-surface-variant hover:text-primary"
+              >
+                Log In
+              </Link>
 
-          <Link
-            href="/dashboard"
-            className="rounded-lg bg-primary px-4 py-2 font-semibold text-on-primary transition-transform active:scale-95"
-          >
-            Go to Dashboard
-          </Link>
+              <Link
+                href="/signup"
+                className="rounded-lg bg-primary px-4 py-2 font-semibold text-on-primary"
+              >
+                Get Started
+              </Link>
+            </>
+          ) : (
+            <ProfileDropdown profile={profile} />
+          )}
         </div>
       </nav>
     </header>

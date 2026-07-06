@@ -4,15 +4,23 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLinkState } from "@/app/lib/state";
+import { BsDash } from "react-icons/bs";
+import {  Building2, CodeIcon, HelpCircleIcon, IndianRupee, Link2, LinkIcon, LogOutIcon, PlusIcon, PlusSquare, Settings, Settings2, TrendingUpDownIcon } from "lucide-react";
+import { LiaLinkSolid } from "react-icons/lia";
+import { BiRupee } from "react-icons/bi";
+import { GrAnalytics } from "react-icons/gr";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { setCreateModalOpen, logout } = useLinkState();
 
   const navItems = [
-    { name: "Dashboard", href: "/dashboard", icon: "dashboard" },
-    { name: "My Links", href: "/dashboard/links", icon: "link" },
-    { name: "Settings", href: "/dashboard/settings", icon: "settings" },
+    { name: "Dashboard", href: "/dashboard", icon: <Building2/> },
+    { name: "My Links", href: "/dashboard/links", icon: <LinkIcon/> },
+    { name: "Settings", href: "/dashboard/settings", icon: <Settings/> },
+    { name: "Pricing", href: "/dashboard/pricing", icon: <IndianRupee/> },
+    { name: "Analytics", href: "/dashboard/analytics", icon: <TrendingUpDownIcon/> },
+
   ];
 
   return (
@@ -22,11 +30,11 @@ export default function Sidebar() {
         <div className="mb-10 px-2 pt-4">
           <Link href="/">
             <h1 className="font-headline-sm text-headline-sm font-extrabold text-primary leading-none flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary">link</span>
-              ShortLink
+              <span className="material-symbols-outlined text-primary"><Link2/></span>
+              CrixLink
             </h1>
           </Link>
-          <p className="font-label-sm text-label-sm text-on-surface-variant opacity-70 px-8">Pro Workspace</p>
+          {/* <p className="font-label-sm text-label-sm text-on-surface-variant opacity-70 px-8">Pro Workspace</p> */}
         </div>
 
         <nav className="flex-1 space-y-1">
@@ -59,16 +67,16 @@ export default function Sidebar() {
             onClick={() => setCreateModalOpen(true)}
             className="w-full mb-6 py-3 px-4 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-transform shadow-sm cursor-pointer"
           >
-            <span className="material-symbols-outlined">add</span>
+            <span className="material-symbols-outlined"><PlusIcon/></span>
             Create New Link
           </button>
           
           <a
-            href="#"
+            href="/help"
             onClick={(e) => e.preventDefault()}
             className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors font-label-md text-label-md"
           >
-            <span className="material-symbols-outlined">help</span>
+            <span className="material-symbols-outlined"><HelpCircleIcon/></span>
             <span>Help Center</span>
           </a>
           <a
@@ -76,7 +84,7 @@ export default function Sidebar() {
             onClick={(e) => e.preventDefault()}
             className="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:bg-surface-container-low rounded-lg transition-colors font-label-md text-label-md"
           >
-            <span className="material-symbols-outlined">code</span>
+            <span className="material-symbols-outlined"><CodeIcon/></span>
             <span>API Docs</span>
           </a>
           
@@ -84,7 +92,7 @@ export default function Sidebar() {
             onClick={logout}
             className="flex items-center gap-3 w-full px-4 py-2 text-error hover:bg-error/10 rounded-lg transition-colors font-label-md text-label-md cursor-pointer text-left"
           >
-            <span className="material-symbols-outlined text-error">logout</span>
+            <span className="material-symbols-outlined text-error"><LogOutIcon/></span>
             <span>Sign Out</span>
           </button>
         </div>

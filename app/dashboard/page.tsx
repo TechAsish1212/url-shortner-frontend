@@ -6,6 +6,8 @@ import Sidebar from "@/app/components/Sidebar";
 import TopBar from "@/app/components/TopBar";
 import CreateLinkModal from "@/app/components/CreateLinkModal";
 import { useLinkState } from "@/app/lib/state";
+import { MdAdsClick, MdLink, MdTrendingUp } from "react-icons/md";
+import { ArrowRight, BarChart2, CheckCircle, Copy, Delete, DeleteIcon, Link2, Link2Icon, Link2Off, Trash } from "lucide-react";
 
 export default function Dashboard() {
   const { links, deleteLink, showToast, profile } = useLinkState();
@@ -56,10 +58,10 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span className="material-symbols-outlined text-[120px]">ads_click</span>
+                <span className="material-symbols-outlined text-[120px]"><MdAdsClick/></span>
               </div>
               <div className="flex items-center gap-2 text-tertiary font-bold">
-                <span className="material-symbols-outlined text-sm">trending_up</span>
+                <span className="material-symbols-outlined text-sm"><MdTrendingUp/></span>
                 <span className="text-sm">+12% from last week</span>
               </div>
             </div>
@@ -75,10 +77,10 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span className="material-symbols-outlined text-[120px]">link</span>
+                <span className="material-symbols-outlined text-[120px]"><MdLink/></span>
               </div>
               <div className="flex items-center gap-2 text-on-surface-variant font-bold">
-                <span className="material-symbols-outlined text-sm">check_circle</span>
+                <span className="material-symbols-outlined text-sm"><CheckCircle/></span>
                 <span className="text-sm">All systems operational</span>
               </div>
             </div>
@@ -110,7 +112,7 @@ export default function Dashboard() {
               >
                 View all links
                 <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-                  arrow_forward
+                  <ArrowRight/>
                 </span>
               </Link>
             </div>
@@ -128,7 +130,7 @@ export default function Dashboard() {
               <div className="divide-y divide-outline-variant">
                 {recentLinks.length === 0 ? (
                   <div className="p-12 text-center text-on-surface-variant">
-                    <span className="material-symbols-outlined text-4xl mb-2 text-outline">link_off</span>
+                    <span className="material-symbols-outlined text-4xl mb-2 text-outline"><Link2Off/></span>
                     <p className="font-body-lg text-body-lg">No links found in your workspace.</p>
                     <p className="text-sm">Click "Create New Link" to generate your first link!</p>
                   </div>
@@ -156,7 +158,7 @@ export default function Dashboard() {
                         >
                           <span className="font-mono">{link.shortUrl}</span>
                           <span className="material-symbols-outlined text-base text-secondary/70 group-hover/btn:text-secondary">
-                            content_copy
+                            <Copy/>
                           </span>
                         </div>
                       </div>
@@ -189,14 +191,14 @@ export default function Dashboard() {
                           className="p-2 hover:bg-surface-container rounded-lg material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors"
                           title="View Analytics"
                         >
-                          bar_chart
+                          <BarChart2/>
                         </Link>
                         <button
                           onClick={() => deleteLink(link.id)}
                           className="p-2 hover:bg-error-container/20 rounded-lg material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-error transition-colors"
                           title="Delete Link"
                         >
-                          delete
+                          <Trash/>
                         </button>
                       </div>
                     </div>
