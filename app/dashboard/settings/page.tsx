@@ -5,6 +5,8 @@ import Sidebar from "@/app/components/Sidebar";
 import TopBar from "@/app/components/TopBar";
 import CreateLinkModal from "@/app/components/CreateLinkModal";
 import { useLinkState } from "@/app/lib/state";
+import { Camera, User2Icon } from "lucide-react";
+import { MdAddCircle, MdArrowForward, MdContentCopy, MdDelete, MdLanguage, MdRefresh, MdVpnKey } from "react-icons/md";
 
 export default function SettingsPage() {
   const {
@@ -104,7 +106,7 @@ export default function SettingsPage() {
               <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary">person</span>
+                    <span className="material-symbols-outlined text-primary"><User2Icon/></span>
                     <h3 className="font-headline-sm text-headline-sm font-bold">Profile Details</h3>
                   </div>
                   <span className="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-[12px] font-bold">
@@ -127,7 +129,7 @@ export default function SettingsPage() {
                         onClick={() => showToast("Avatar editing coming soon!")}
                         className="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-md hover:scale-110 active:scale-90 transition-transform cursor-pointer"
                       >
-                        <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+                        <span className="material-symbols-outlined text-[18px]"><Camera/></span>
                       </button>
                     </div>
 
@@ -176,15 +178,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-outline-variant flex justify-between items-center">
-                    <button
-                      type="button"
-                      onClick={logout}
-                      className="flex items-center gap-2 text-error hover:bg-error/10 px-4 py-2.5 rounded-lg font-bold transition-all cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-sm">logout</span>
-                      Sign Out
-                    </button>
+                  <div className="pt-6 border-t border-outline-variant flex justify-end items-center">             
                     <button
                       type="submit"
                       className="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-md shadow-primary/10 cursor-pointer"
@@ -195,14 +189,15 @@ export default function SettingsPage() {
                 </form>
               </div>
 
+              {/* TODO */}
               {/* API Access Keys */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md">
+              {/* <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="material-symbols-outlined text-primary">vpn_key</span>
+                  <span className="material-symbols-outlined text-primary"><MdVpnKey/></span>
                   <h3 className="font-headline-sm text-headline-sm font-bold">API Access</h3>
                 </div>
                 <p className="text-on-surface-variant font-body-md mb-6 leading-relaxed">
-                  Connect ShortLink to your custom applications or workflows using our secure developer API.
+                  Connect CrixLink to your custom applications or workflows using our secure developer API.
                 </p>
 
                 <div className="space-y-4">
@@ -225,14 +220,14 @@ export default function SettingsPage() {
                           className="p-2 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
                           title="Copy API Key"
                         >
-                          <span className="material-symbols-outlined text-lg">content_copy</span>
+                          <span className="material-symbols-outlined text-lg"><MdContentCopy/></span>
                         </button>
                         <button
                           onClick={() => regenerateApiKey(key.id)}
                           className="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
                           title="Regenerate API Key"
                         >
-                          <span className="material-symbols-outlined text-lg">refresh</span>
+                          <span className="material-symbols-outlined text-lg"><MdRefresh/></span>
                         </button>
                       </div>
                     </div>
@@ -243,7 +238,7 @@ export default function SettingsPage() {
                       onClick={() => showToast("Additional keys require enterprise plan.")}
                       className="flex-grow py-3 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                     >
-                      <span className="material-symbols-outlined">add_circle</span>
+                      <span className="material-symbols-outlined"><MdAddCircle/></span>
                       Generate New Key
                     </button>
                     <a
@@ -256,7 +251,7 @@ export default function SettingsPage() {
                     </a>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
             </div>
 
@@ -267,7 +262,7 @@ export default function SettingsPage() {
               <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md h-full flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="material-symbols-outlined text-primary">language</span>
+                    <span className="material-symbols-outlined text-primary"><MdLanguage/></span>
                     <h3 className="font-headline-sm text-headline-sm font-bold">Custom Domains</h3>
                   </div>
                   <p className="text-on-surface-variant font-body-md mb-8 leading-relaxed">
@@ -295,7 +290,7 @@ export default function SettingsPage() {
                               className="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-lg hover:bg-error-container/10 cursor-pointer"
                               title="Disconnect Domain"
                             >
-                              <span className="material-symbols-outlined">delete</span>
+                              <span className="material-symbols-outlined"><MdDelete/></span>
                             </button>
                           </div>
                         </div>
@@ -321,13 +316,13 @@ export default function SettingsPage() {
                           <button
                             type="button"
                             onClick={() => setIsAddingDomain(false)}
-                            className="px-3 py-1.5 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container transition-colors font-semibold"
+                            className="px-3 py-1.5 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container transition-colors font-semibold cursor-pointer"
                           >
                             Cancel
                           </button>
                           <button
                             type="submit"
-                            className="px-3 py-1.5 bg-primary text-on-primary rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                            className="px-3 py-1.5 bg-primary text-on-primary rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           >
                             Add
                           </button>
@@ -336,7 +331,7 @@ export default function SettingsPage() {
                     ) : (
                       <div className="p-6 border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center text-center">
                         <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mb-4">
-                          <span className="material-symbols-outlined text-outline">add</span>
+                          <span className="material-symbols-outlined text-outline"><MdAddCircle/></span>
                         </div>
                         <h4 className="font-bold text-on-surface mb-1">Add a Domain</h4>
                         <p className="text-on-surface-variant font-label-md mb-6 leading-relaxed">
@@ -357,7 +352,7 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                   <div className="bg-surface-container-low p-4 rounded-xl">
                     <h5 className="font-label-md text-label-md font-bold mb-2 flex items-center gap-2 text-on-surface">
-                      <span className="material-symbols-outlined text-[16px] text-primary">info</span>
+                      <span className="material-symbols-outlined text-[16px] text-primary"><MdLanguage/></span>
                       DNS Setup Guide
                     </h5>
                     <p className="text-[13px] text-on-surface-variant leading-relaxed">
@@ -391,7 +386,7 @@ export default function SettingsPage() {
                         className="text-on-primary font-bold text-label-md flex items-center gap-1 group-hover:translate-x-2 transition-transform cursor-pointer"
                       >
                         Upgrade Workspace
-                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                        <span className="material-symbols-outlined text-sm"><MdArrowForward/></span>
                       </button>
                     </div>
                   </div>

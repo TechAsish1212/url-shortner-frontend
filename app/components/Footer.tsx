@@ -81,7 +81,7 @@ export default function Footer() {
         {/* Bottom Area */}
         <div className="mt-16 pt-8 border-t border-outline/10 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="font-label-sm text-label-sm text-inverse-on-surface/50">
-            © {new Date().getFullYear()} ShortLink Inc. Built for the modern web.
+            © {new Date().getFullYear()} CrixLink Inc. Built for the modern web.
           </p>
           <div className="flex gap-6">
             <a

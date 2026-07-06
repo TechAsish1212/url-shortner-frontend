@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useLinkState } from "@/app/lib/state";
+import { CheckCircle } from "lucide-react";
 
 export default function Toast() {
   const { toast } = useLinkState();
@@ -18,7 +19,7 @@ export default function Toast() {
         className="material-symbols-outlined text-on-tertiary-container"
         style={{ fontVariationSettings: "'FILL' 1" }}
       >
-        check_circle
+        <CheckCircle/>
       </span>
       <span>{toast}</span>
     </div>

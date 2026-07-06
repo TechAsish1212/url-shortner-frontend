@@ -5,6 +5,7 @@ import Sidebar from "@/app/components/Sidebar";
 import TopBar from "@/app/components/TopBar";
 import CreateLinkModal from "@/app/components/CreateLinkModal";
 import { useLinkState } from "@/app/lib/state";
+import { CopyIcon, Link2, MousePointerClick, Search, Trash, TrendingUp } from "lucide-react";
 
 export default function LinksPage() {
   const { links, deleteLink, showToast } = useLinkState();
@@ -64,7 +65,7 @@ export default function LinksPage() {
               {/* Search input */}
               <div className="relative flex-grow sm:w-80">
                 <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-base">
-                  search
+                  <Search/> 
                 </span>
                 <input
                   type="text"
@@ -104,7 +105,7 @@ export default function LinksPage() {
                 </h3>
               </div>
               <div className="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center text-on-primary-container shadow-inner">
-                <span className="material-symbols-outlined font-bold">trending_up</span>
+                <span className="material-symbols-outlined font-bold"><TrendingUp/></span>
               </div>
             </div>
 
@@ -116,7 +117,7 @@ export default function LinksPage() {
                 </h3>
               </div>
               <div className="w-12 h-12 bg-tertiary-container rounded-full flex items-center justify-center text-on-tertiary-container shadow-inner">
-                <span className="material-symbols-outlined font-bold">link</span>
+                <span className="material-symbols-outlined font-bold"><Link2/></span>
               </div>
             </div>
 
@@ -126,7 +127,7 @@ export default function LinksPage() {
                 <h3 className="font-headline-sm text-headline-sm font-black text-on-surface">8.4%</h3>
               </div>
               <div className="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center text-on-secondary-container shadow-inner">
-                <span className="material-symbols-outlined font-bold">ads_click</span>
+                <span className="material-symbols-outlined font-bold"><MousePointerClick/></span>
               </div>
             </div>
           </div>
@@ -208,14 +209,14 @@ export default function LinksPage() {
                               className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
                               title="Copy Link"
                             >
-                              <span className="material-symbols-outlined text-xl">content_copy</span>
+                              <span className="material-symbols-outlined text-xl"><CopyIcon/></span>
                             </button>
                             <button
                               onClick={() => deleteLink(link.id)}
                               className="p-2 text-on-surface-variant hover:bg-error-container/20 hover:text-error rounded-lg transition-colors cursor-pointer"
                               title="Delete Link"
                             >
-                              <span className="material-symbols-outlined text-xl">delete</span>
+                              <span className="material-symbols-outlined text-xl"><Trash/></span>
                             </button>
                           </div>
                         </td>

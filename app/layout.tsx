@@ -8,7 +8,8 @@ import Footer from "@/app/components/Footer";
 
 export const metadata: Metadata = {
   title: "ShortLink | Precision URL Management",
-  description: "A precision-engineered platform for high-performance URL management, detailed analytics, and custom brand identity.",
+  description:
+    "A precision-engineered platform for high-performance URL management, detailed analytics, and custom brand identity.",
 };
 
 export default function RootLayout({
@@ -19,8 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <RootBody>
-        <MarketingHeader/>
         <LinkStateProvider>
+          <MarketingHeader />
           {children}
           <Toast />
           <Footer />
