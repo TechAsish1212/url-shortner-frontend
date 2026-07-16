@@ -35,7 +35,7 @@ export default function TopBar() {
     <header className="docked full-width top-0 sticky z-30 glass-header border-b border-outline-variant">
       <div className="relative flex items-center h-16 px-margin-desktop max-w-container-max mx-auto">
         {/* Logo */}
-      
+
 
         {/* Center Navigation */}
         <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-6">
@@ -51,73 +51,69 @@ export default function TopBar() {
         </nav>
 
         {/* Profile */}
-       <div className="relative ml-auto" ref={menuRef} >
-      {/* Avatar Button */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-8 h-8 rounded-full overflow-hidden border border-outline-variant hover:ring-2 hover:ring-primary transition-all cursor-pointer"
-      >
-        <img
-          src={profile.avatarUrl}
-          alt={`${profile.name}'s Avatar`}
-          className="w-full h-full object-cover"
-        />
-      </button>
+        <div className="relative ml-auto" ref={menuRef} >
+          {/* Avatar Button */}
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="h-9 w-9 rounded-full border flex items-center justify-center bg-primary text-white font-semibold cursor-pointer"
+          >
+            {profile.name?.charAt(0).toUpperCase()}
+          </button>
 
-      {/* Dropdown */}
-      {open && (
-        <div className="absolute right-0 mt-3 w-72 rounded-2xl border border-outline-variant bg-surface shadow-lg overflow-hidden z-50">
-          {/* User Info */}
-          <div className="p-4 border-b border-outline-variant">
-            <p className="font-semibold text-on-surface">
-              {profile.name}
-            </p>
-            <p className="text-sm text-on-surface-variant truncate">
-              {profile.email}
-            </p>
-          </div>
+          {/* Dropdown */}
+          {open && (
+            <div className="absolute right-0 mt-3 w-72 rounded-2xl border border-outline-variant bg-surface shadow-lg overflow-hidden z-50">
+              {/* User Info */}
+              <div className="p-4 border-b border-outline-variant">
+                <p className="font-semibold text-on-surface">
+                  {profile.name}
+                </p>
+                <p className="text-sm text-on-surface-variant truncate">
+                  {profile.email}
+                </p>
+              </div>
 
-          {/* Plan */}
-          <div className="p-4 border-b border-outline-variant">
-            <p className="text-xs uppercase text-on-surface-variant">
-              Current Plan
-            </p>
-            <p className="font-medium text-primary">
-              Free Plan
-            </p>
-          </div>
+              {/* Plan */}
+              <div className="p-4 border-b border-outline-variant">
+                <p className="text-xs uppercase text-on-surface-variant">
+                  Current Plan
+                </p>
+                <p className="font-medium text-primary">
+                  Free Plan
+                </p>
+              </div>
 
-          {/* Menu Items */}
-          <div className="p-2">
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-container"
-            >
-              <Settings size={18} />
-              Settings
-            </Link>
+              {/* Menu Items */}
+              <div className="p-2">
+                <Link
+                  href="/dashboard/settings"
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-container"
+                >
+                  <Settings size={18} />
+                  Settings
+                </Link>
 
-            <Link
-              href="/pricing"
-              className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-container"
-            >
-              <CreditCard size={18} />
-              Upgrade Plan
-            </Link>
-          </div>
+                <Link
+                  href="/pricing"
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-surface-container"
+                >
+                  <CreditCard size={18} />
+                  Upgrade Plan
+                </Link>
+              </div>
 
-          {/* Logout */}
-          <div className="p-2 border-t border-outline-variant">
-            <button
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-red-500 hover:bg-red-50"
-            >
-              <LogOut size={18} />
-              Logout
-            </button>
-          </div>
+              {/* Logout */}
+              <div className="p-2 border-t border-outline-variant">
+                <button
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-red-500 hover:bg-red-50"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
       </div>
     </header>
   );

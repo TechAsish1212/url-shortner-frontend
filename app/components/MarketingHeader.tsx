@@ -17,7 +17,7 @@ export default function MarketingHeader() {
   const pathname = usePathname();
   const { profile, isAuthenticated } = useLinkState();
 
- if (pathname.startsWith("/dashboard")) {
+ if (pathname.startsWith("/dashboard") || pathname === "/booking") {
   return null;
 }
 

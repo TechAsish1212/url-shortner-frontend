@@ -5,76 +5,202 @@ import Sidebar from "@/app/components/Sidebar";
 import TopBar from "@/app/components/TopBar";
 import CreateLinkModal from "@/app/components/CreateLinkModal";
 import { useLinkState } from "@/app/lib/state";
-import { Camera, User2Icon } from "lucide-react";
+import { AlertCircle, Calendar, CalendarIcon, Camera, CheckCircle, Clock, Edit2, LogOut, Mail, Phone, Save, Shield, User, User2Icon, UserCheck, Users, X } from "lucide-react";
 import { MdAddCircle, MdArrowForward, MdContentCopy, MdDelete, MdLanguage, MdRefresh, MdVpnKey } from "react-icons/md";
-
+import { getProfile } from "@/app/api/auth/getProfile";
+import { updateProfile } from "@/app/api/auth/updateProfile";
 export default function SettingsPage() {
-  const {
-    profile,
-    updateProfile,
-    apiKeys,
-    regenerateApiKey,
-    domains,
-    addDomain,
-    deleteDomain,
-    links,
-    showToast,
-    logout,
-  } = useLinkState();
+const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    mobileNumber: '',
+    countryCode: '',
+    dob: '',
+    gender: ''
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-  // Profile forms state
-  const [name, setName] = useState("");
-  const [handle, setHandle] = useState("");
-  const [email, setEmail] = useState("");
-
-  // Domain add state
-  const [isAddingDomain, setIsAddingDomain] = useState(false);
-  const [newDomainInput, setNewDomainInput] = useState("");
-
-  // Sync profile local state on load
   useEffect(() => {
-    if (profile) {
-      setName(profile.name);
-      setHandle(profile.handle);
-      setEmail(profile.email);
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+      
+      const response = await getProfile(token);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        const userData = data.user;
+        setUser(userData);
+        
+        let formattedDob = '';
+        if (userData.dob) {
+          const date = new Date(userData.dob);
+          formattedDob = date.toISOString().split('T')[0];
+        }
+
+        setFormData({
+          name: userData.name || '',
+          mobileNumber: userData.mobileNumber || '',
+          countryCode: userData.countryCode || '+91',
+          dob: formattedDob,
+          gender: userData.gender || ''
+        });
+      } else {
+        setError(data.message || 'Failed to load profile');
+      }
+    } catch (error:any) {
+      console.error('Error fetching profile:', error);
+      if (error.message === 'Failed to fetch') {
+        setError('Cannot connect to server. Please check if backend is running.');
+      } else {
+        setError('Failed to load profile data. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-  }, [profile]);
-
-  const handleUpdateProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !handle.trim() || !email.trim()) return;
-    updateProfile(name.trim(), handle.trim(), email.trim());
   };
 
-  const handleAddDomainSubmit = (e: React.FormEvent) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (!newDomainInput.trim()) return;
-    
-    // Simple validation
-    let domainStr = newDomainInput.trim().toLowerCase();
-    domainStr = domainStr.replace(/^(https?:\/\/)?(www\.)?/, ""); // strip protocol/www
-    
-    if (domainStr.includes("/") || domainStr.length < 4) {
-      showToast("Invalid domain format.");
-      return;
+    setIsSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+      
+      const response = await updateProfile(token,formData);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setUser(data.user);
+        setSuccess('Profile updated successfully!');
+        setTimeout(() => {
+          setIsEditing(false);
+          setSuccess(null);
+        }, 2000);
+      } else {
+        setError(data.message || 'Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setError(error.message || 'Failed to update profile');
+    } finally {
+      setIsSaving(false);
     }
-
-    addDomain(domainStr);
-    setNewDomainInput("");
-    setIsAddingDomain(false);
   };
 
-  const handleCopyApiKey = (key: string) => {
-    navigator.clipboard.writeText(key);
-    showToast("API key copied to clipboard!");
+  const handleCancel = () => {
+    setIsEditing(false);
+    setError(null);
+    setSuccess(null);
+    if (user) {
+      let formattedDob = '';
+      if (user.dob) {
+        const date = new Date(user.dob);
+        formattedDob = date.toISOString().split('T')[0];
+      }
+      setFormData({
+        name: user.name || '',
+        mobileNumber: user.mobileNumber || '',
+        countryCode: user.countryCode || '+91',
+        dob: formattedDob,
+        gender: user.gender || ''
+      });
+    }
   };
 
-  const maskApiKey = (key: string) => {
-    if (key.length <= 12) return key;
-    return `${key.slice(0, 8)}••••••••••••••••${key.slice(-4)}`;
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not set';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return 'Not set';
+    }
   };
 
-  const usagePercent = Math.min((links.length / 100) * 100, 100);
+  const formatMemberSince = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return 'N/A';
+    }
+  };
+
+  const formatLastLogin = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return 'N/A';
+    }
+  };
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    const names = name.split(' ');
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 font-medium">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background text-on-surface font-body-md min-h-screen flex flex-col">
@@ -86,317 +212,330 @@ export default function SettingsPage() {
         <TopBar />
 
         {/* Content Canvas */}
-        <main className="flex-grow px-margin-mobile md:px-margin-desktop py-12 max-w-5xl w-full mx-auto space-y-12">
-          
-          {/* Header */}
-          <div>
-            <h2 className="font-headline-md text-headline-md font-bold text-on-surface mb-2">Account Settings</h2>
-            <p className="font-body-md text-body-md text-on-surface-variant">
-              Manage your workspace preferences, domains, and security keys.
-            </p>
-          </div>
-
-          {/* Bento Grid Settings */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
-            
-            {/* Left Column (Profile & API Keys) */}
-            <div className="lg:col-span-7 space-y-gutter">
-              
-              {/* Profile Details Form */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary"><User2Icon/></span>
-                    <h3 className="font-headline-sm text-headline-sm font-bold">Profile Details</h3>
-                  </div>
-                  <span className="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-[12px] font-bold">
-                    Pro Member
-                  </span>
-                </div>
-
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
-                    <div className="relative group">
-                      <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-surface-container shadow-inner">
-                        <img
-                          className="w-full h-full object-cover"
-                          alt="Alex Rivera Profile Pic"
-                          src={profile.avatarUrl}
-                        />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4">
+          <div className="max-w-4xl mx-auto">
+            {/* Header */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 md:py-12">
+                <div className="flex flex-col md:flex-row items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                        <span className="text-3xl font-bold text-white">
+                          {getInitials(user?.name)}
+                        </span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => showToast("Avatar editing coming soon!")}
-                        className="absolute bottom-0 right-0 bg-primary text-on-primary p-2 rounded-full shadow-md hover:scale-110 active:scale-90 transition-transform cursor-pointer"
-                      >
-                        <span className="material-symbols-outlined text-[18px]"><Camera/></span>
+                      <button className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 shadow-lg hover:bg-gray-50 transition-colors">
+                        <Camera className="w-4 h-4 text-gray-600" />
                       </button>
                     </div>
+                    <div>
+                      <h1 className="text-2xl md:text-3xl font-bold text-white">{user?.name || 'User'}</h1>
+                      <p className="text-blue-100 flex items-center gap-1">
+                        <Mail className="w-4 h-4" />
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
+                  {!isEditing && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="mt-4 md:mt-0 px-6 py-2.5 bg-white text-blue-600 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-200 flex items-center gap-2 shadow-lg"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                      Edit Profile
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
 
-                    <div className="flex-grow w-full space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
-                            Full Name
-                          </label>
+            {/* Notifications */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-red-800">Error</p>
+                  <p className="text-red-700">{error}</p>
+                </div>
+                <button
+                  onClick={() => setError(null)}
+                  className="ml-auto text-red-500 hover:text-red-700"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {success && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium text-green-800">Success</p>
+                  <p className="text-green-700">{success}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Main Content */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="p-6 md:p-8">
+                {isEditing ? (
+                  <form onSubmit={handleSave} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Full Name */}
+                      <div className="col-span-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Full Name
+                        </label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                           <input
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:outline-none font-body-md text-on-surface"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
                             required
+                            placeholder="Enter your full name"
                           />
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
-                            Public Handle
-                          </label>
-                          <div className="relative">
-                            <span className="absolute left-4 top-2.5 text-outline">@</span>
+                      </div>
+
+                      {/* Email */}
+                      <div className="col-span-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Email Address
+                        </label>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <input
+                            type="email"
+                            value={user?.email || ''}
+                            className="w-full pl-10 pr-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-500 cursor-not-allowed"
+                            disabled
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1 ml-1">Email cannot be changed</p>
+                      </div>
+
+                      {/* Phone Number */}
+                      <div className="col-span-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <div className="flex gap-3">
+                          <div className="relative w-24">
+                            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
                               type="text"
-                              value={handle}
-                              onChange={(e) => setHandle(e.target.value)}
-                              className="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-8 pr-4 py-2.5 focus:ring-2 focus:ring-primary focus:outline-none font-body-md text-on-surface"
-                              required
+                              name="countryCode"
+                              value={formData.countryCode}
+                              onChange={handleChange}
+                              className="w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                              placeholder="+91"
+                            />
+                          </div>
+                          <div className="flex-1 relative">
+                            <input
+                              type="tel"
+                              name="mobileNumber"
+                              value={formData.mobileNumber}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                              placeholder="Enter phone number"
                             />
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="font-label-sm text-label-sm text-outline uppercase tracking-wider font-semibold">
-                          Email Address
+
+                      {/* Date of Birth */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Date of Birth
                         </label>
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="bg-surface-container-low border border-outline-variant rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:outline-none font-body-md text-on-surface"
-                          required
-                        />
+                        <div className="relative">
+                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <input
+                            type="date"
+                            name="dob"
+                            value={formData.dob}
+                            onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Gender */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Gender
+                        </label>
+                        <div className="relative">
+                          <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none"
+                          >
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                            <option value="prefer not to say">Prefer not to say</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="pt-6 border-t border-outline-variant flex justify-end items-center">             
-                    <button
-                      type="submit"
-                      className="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-bold transition-all hover:scale-[1.02] active:scale-95 shadow-md shadow-primary/10 cursor-pointer"
-                    >
-                      Update Profile
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* TODO */}
-              {/* API Access Keys */}
-              {/* <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="material-symbols-outlined text-primary"><MdVpnKey/></span>
-                  <h3 className="font-headline-sm text-headline-sm font-bold">API Access</h3>
-                </div>
-                <p className="text-on-surface-variant font-body-md mb-6 leading-relaxed">
-                  Connect CrixLink to your custom applications or workflows using our secure developer API.
-                </p>
-
-                <div className="space-y-4">
-                  {apiKeys.map((key) => (
-                    <div
-                      key={key.id}
-                      className="p-4 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-between group transition-colors hover:bg-surface-container"
-                    >
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-label-sm text-label-sm text-outline font-semibold">
-                          {key.name}
-                        </span>
-                        <code className="font-label-md text-label-md text-on-surface mt-1 tracking-widest font-mono truncate">
-                          {maskApiKey(key.key)}
-                        </code>
-                      </div>
-                      <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => handleCopyApiKey(key.key)}
-                          className="p-2 text-primary hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer"
-                          title="Copy API Key"
-                        >
-                          <span className="material-symbols-outlined text-lg"><MdContentCopy/></span>
-                        </button>
-                        <button
-                          onClick={() => regenerateApiKey(key.id)}
-                          className="p-2 text-error hover:bg-error-container/20 rounded-lg transition-colors cursor-pointer"
-                          title="Regenerate API Key"
-                        >
-                          <span className="material-symbols-outlined text-lg"><MdRefresh/></span>
-                        </button>
-                      </div>
+                    {/* Action Buttons */}
+                    <div className="flex flex-col md:flex-row gap-3 pt-6 border-t-2">
+                      <button
+                        type="submit"
+                        disabled={isSaving}
+                        className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                      >
+                        {isSaving ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-5 h-5" />
+                            Save Changes
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCancel}
+                        className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-200 flex items-center justify-center gap-2"
+                      >
+                        <X className="w-5 h-5" />
+                        Cancel
+                      </button>
                     </div>
-                  ))}
+                  </form>
+                ) : (
+                  // Display Mode
+                  <div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {/* Profile Information */}
+                      <div className="space-y-6">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-blue-50 rounded-lg">
+                            <User className="w-5 h-5 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Full Name</p>
+                            <p className="text-lg font-semibold text-gray-900">{user?.name || 'Not set'}</p>
+                          </div>
+                        </div>
 
-                  <div className="flex items-center gap-4 pt-2">
-                    <button
-                      onClick={() => showToast("Additional keys require enterprise plan.")}
-                      className="flex-grow py-3 border-2 border-primary text-primary rounded-xl font-bold hover:bg-primary/5 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-                    >
-                      <span className="material-symbols-outlined"><MdAddCircle/></span>
-                      Generate New Key
-                    </button>
-                    <a
-                      href="#"
-                      onClick={(e) => e.preventDefault()}
-                      className="px-4 py-3 border border-outline-variant text-on-surface-variant rounded-xl hover:bg-surface-container-high transition-colors cursor-pointer"
-                      title="API Guide"
-                    >
-                      <span className="material-symbols-outlined">help</span>
-                    </a>
-                  </div>
-                </div>
-              </div> */}
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-purple-50 rounded-lg">
+                            <Mail className="w-5 h-5 text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Email</p>
+                            <p className="text-lg font-semibold text-gray-900">{user?.email || 'Not set'}</p>
+                          </div>
+                        </div>
 
-            </div>
-
-            {/* Right Column (Domains & Limits) */}
-            <div className="lg:col-span-5 space-y-gutter">
-              
-              {/* Custom Domains Manager */}
-              <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm transition-all hover:shadow-md h-full flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="material-symbols-outlined text-primary"><MdLanguage/></span>
-                    <h3 className="font-headline-sm text-headline-sm font-bold">Custom Domains</h3>
-                  </div>
-                  <p className="text-on-surface-variant font-body-md mb-8 leading-relaxed">
-                    Personalize your short links by connecting your own branded domain name.
-                  </p>
-
-                  <div className="space-y-6 mb-8">
-                    {/* Domains List */}
-                    {domains.map((domain) => (
-                      <div key={domain} className="relative group">
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-secondary rounded-xl blur opacity-15 group-hover:opacity-35 transition duration-1000"></div>
-                        <div className="relative bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-inner">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-bold text-on-surface font-mono">{domain}</p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="w-2 h-2 bg-tertiary-fixed-dim rounded-full animate-pulse"></span>
-                                <span className="font-label-sm text-label-sm text-tertiary font-bold">
-                                  Active
-                                </span>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => deleteDomain(domain)}
-                              className="text-on-surface-variant hover:text-error transition-colors p-1.5 rounded-lg hover:bg-error-container/10 cursor-pointer"
-                              title="Disconnect Domain"
-                            >
-                              <span className="material-symbols-outlined"><MdDelete/></span>
-                            </button>
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-green-50 rounded-lg">
+                            <Phone className="w-5 h-5 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Phone Number</p>
+                            <p className="text-lg font-semibold text-gray-900">
+                              {user?.countryCode && user?.mobileNumber
+                                ? `${user.countryCode} ${user.mobileNumber}`
+                                : 'Not set'}
+                            </p>
                           </div>
                         </div>
                       </div>
-                    ))}
 
-                    {/* Add Domain Trigger/Form */}
-                    {isAddingDomain ? (
-                      <form onSubmit={handleAddDomainSubmit} className="p-5 border-2 border-primary rounded-xl space-y-4 bg-surface-container-low animate-fade-in">
-                        <h4 className="font-bold text-on-surface text-sm">Add Custom Domain</h4>
-                        <div className="flex flex-col gap-1">
-                          <input
-                            type="text"
-                            placeholder="e.g. lnk.mybrand.com"
-                            value={newDomainInput}
-                            onChange={(e) => setNewDomainInput(e.target.value)}
-                            className="bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-full text-on-surface font-mono"
-                            autoFocus
-                            required
-                          />
+                      <div className="space-y-6">
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-orange-50 rounded-lg">
+                            <CalendarIcon className="w-5 h-5 text-orange-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Date of Birth</p>
+                            <p className="text-lg font-semibold text-gray-900">{formatDate(user?.dob)}</p>
+                          </div>
                         </div>
-                        <div className="flex justify-end gap-2 text-xs">
-                          <button
-                            type="button"
-                            onClick={() => setIsAddingDomain(false)}
-                            className="px-3 py-1.5 border border-outline-variant text-on-surface-variant rounded-lg hover:bg-surface-container transition-colors font-semibold cursor-pointer"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            className="px-3 py-1.5 bg-primary text-on-primary rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
-                          >
-                            Add
-                          </button>
-                        </div>
-                      </form>
-                    ) : (
-                      <div className="p-6 border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center text-center">
-                        <div className="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center mb-4">
-                          <span className="material-symbols-outlined text-outline"><MdAddCircle/></span>
-                        </div>
-                        <h4 className="font-bold text-on-surface mb-1">Add a Domain</h4>
-                        <p className="text-on-surface-variant font-label-md mb-6 leading-relaxed">
-                          Boost click-through rates with your own branded URLs.
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => setIsAddingDomain(true)}
-                          className="w-full bg-secondary text-on-secondary py-3 rounded-xl font-bold shadow-lg shadow-secondary/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-                        >
-                          Connect Domain
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="bg-surface-container-low p-4 rounded-xl">
-                    <h5 className="font-label-md text-label-md font-bold mb-2 flex items-center gap-2 text-on-surface">
-                      <span className="material-symbols-outlined text-[16px] text-primary"><MdLanguage/></span>
-                      DNS Setup Guide
-                    </h5>
-                    <p className="text-[13px] text-on-surface-variant leading-relaxed">
-                      Point your domain's A record to{" "}
-                      <code className="bg-surface-container-highest px-1.5 py-0.5 rounded font-mono font-bold text-on-surface">
-                        75.2.60.5
-                      </code>{" "}
-                      to complete the connection.
-                    </p>
-                  </div>
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-pink-50 rounded-lg">
+                            <Users className="w-5 h-5 text-pink-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Gender</p>
+                            <p className="text-lg font-semibold text-gray-900 capitalize">{user?.gender || 'Not Set'}</p>
+                          </div>
+                        </div>
 
-                  {/* Monthly Limits widget */}
-                  <div className="bg-primary text-on-primary rounded-xl p-6 relative overflow-hidden group shadow-lg shadow-primary/10">
-                    <div className="relative z-10 space-y-4">
-                      <div>
-                        <p className="font-label-sm text-label-sm uppercase tracking-widest opacity-80 mb-1">
-                          Monthly Usage
-                        </p>
-                        <h4 className="font-headline-sm text-headline-sm font-bold">
-                          {links.length} / 100 links
-                        </h4>
+                        <div className="flex items-start space-x-3">
+                          <div className="p-2 bg-yellow-50 rounded-lg">
+                            <Shield className="w-5 h-5 text-yellow-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-500">Account Status</p>
+                            <div className="mt-1">
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${user?.emailVerified
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-yellow-100 text-yellow-700'
+                                }`}>
+                                {user?.emailVerified ? (
+                                  <>
+                                    <CheckCircle className="w-4 h-4 mr-1.5" />
+                                    Verified
+                                  </>
+                                ) : (
+                                  <>
+                                    <AlertCircle className="w-4 h-4 mr-1.5" />
+                                    Not Verified
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-                        <div
-                          style={{ width: `${usagePercent}%` }}
-                          className="bg-white h-full rounded-full shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all duration-500"
-                        ></div>
+                    </div>
+
+                    {/* Additional Info */}
+                    <div className="mt-8 pt-6 border-t-2 border-gray-100">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <span>
+                            <span className="font-medium">Member Since:</span>{' '}
+                            {formatMemberSince(user?.createdAt)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-600">
+                          <UserCheck className="w-4 h-4 text-gray-400" />
+                          <span>
+                            <span className="font-medium">Last Login:</span>{' '}
+                            {formatLastLogin(user?.lastLoginAt)}
+                          </span>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => showToast("Subscriptions details coming soon!")}
-                        className="text-on-primary font-bold text-label-md flex items-center gap-1 group-hover:translate-x-2 transition-transform cursor-pointer"
-                      >
-                        Upgrade Workspace
-                        <span className="material-symbols-outlined text-sm"><MdArrowForward/></span>
-                      </button>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-
             </div>
 
+        
           </div>
-        </main>
+        </div>
       </div>
 
       {/* Global Link Creator Dialog */}
@@ -404,3 +543,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

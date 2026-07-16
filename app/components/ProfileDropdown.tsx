@@ -35,12 +35,11 @@ export default function ProfileDropdown({
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen((o) => !o)}>
-        <img
-          src={profile.avatarUrl}
-          alt={profile.name}
-          className="h-9 w-9 rounded-full border object-cover cursor-pointer"
-        />
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="h-9 w-9 rounded-full border flex items-center justify-center bg-primary text-white font-semibold cursor-pointer"
+      >
+        {profile.name?.charAt(0).toUpperCase()}
       </button>
 
       {open && (

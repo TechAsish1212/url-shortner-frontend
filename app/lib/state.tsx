@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { signin } from "../api/auth/login";
 
 export interface LinkItem {
   id: string;
@@ -275,31 +276,51 @@ export function LinkStateProvider({ children }: { children: React.ReactNode }) {
     showToast("API key regenerated.");
   };
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    if (password.length < 6) {
-      showToast("Password must be at least 6 characters.");
+const login = async (
+  email: string,
+  password: string
+): Promise<boolean> => {
+  try {
+    const response = await signin({
+      email,
+      password,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showToast(data.message || "Login failed");
       return false;
     }
-    
-    if (email.toLowerCase() === defaultProfile.email.toLowerCase()) {
-      setProfile(defaultProfile);
-    } else {
-      const namePart = email.split("@")[0];
-      const capitalized = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+
+    // Save JWT
+    if (data.token) {
+      localStorage.setItem("token", data.token);
+    }
+
+    // Save User
+    if (data.data) {
       setProfile({
-        name: capitalized,
-        handle: namePart.toLowerCase(),
-        email: email,
-        avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${namePart}`,
-        plan: "Free Plan",
+        name: data.data.name,
+        handle: data.data.name?.toLowerCase() || "",
+        email: data.data.email,
+        avatarUrl: data.data.avatar || "",
+        plan: data.data.plan || "Free Plan",
       });
     }
 
     setIsAuthenticated(true);
     localStorage.setItem("shortlink_authenticated", "true");
-    showToast("Logged in successfully!");
+
+    showToast("Login successful");
+
     return true;
-  };
+  } catch (error) {
+    console.error(error);
+    showToast("Authentication failed");
+    return false;
+  }
+};
 
   const signup = async (name: string, email: string, password: string): Promise<boolean> => {
     if (password.length < 8) {

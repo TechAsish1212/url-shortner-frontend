@@ -7,6 +7,7 @@ import { useLinkState } from "@/app/lib/state";
 import { ArrowRight, Eye, EyeOff, GitBranchIcon, Link2 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import { signin } from "../api/auth/login";
 
 export default function LoginPage() {
   const { login, isAuthenticated, isLoaded, showToast } = useLinkState();
@@ -29,23 +30,28 @@ export default function LoginPage() {
     }
   }, [isLoaded, isAuthenticated, router]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !password) return;
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    setIsSubmitting(true);
-    try {
-      const success = await login(email.trim(), password);
-      if (success) {
-        router.push("/dashboard");
-      }
-    } catch (err) {
-      console.error(err);
-      showToast("Authentication failed.");
-    } finally {
-      setIsSubmitting(false);
+  if (!email.trim() || !password) return;
+
+  setIsSubmitting(true);
+
+  try {
+    const success = await login(
+      email.trim(),
+      password
+    );
+
+    if (success) {
+      router.push("/dashboard");
     }
-  };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleSocialLogin = async (provider: string) => {
     setIsSubmitting(true);
@@ -94,11 +100,10 @@ export default function LoginPage() {
               {/* Email Input */}
               <div className="space-y-1.5">
                 <label
-                  className={`font-label-md text-label-md block transition-colors duration-200 ${
-                    isEmailFocused
+                  className={`font-label-md text-label-md block transition-colors duration-200 ${isEmailFocused
                       ? "text-primary font-semibold"
                       : "text-on-surface-variant"
-                  }`}
+                    }`}
                   htmlFor="email"
                 >
                   Email Address
@@ -121,11 +126,10 @@ export default function LoginPage() {
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
                   <label
-                    className={`font-label-md text-label-md block transition-colors duration-200 ${
-                      isPasswordFocused
+                    className={`font-label-md text-label-md block transition-colors duration-200 ${isPasswordFocused
                         ? "text-primary font-semibold"
                         : "text-on-surface-variant"
-                    }`}
+                      }`}
                     htmlFor="password"
                   >
                     Password

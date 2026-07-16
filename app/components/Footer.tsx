@@ -6,7 +6,7 @@ import { Link2 } from "lucide-react";
 
 export default function Footer() {
   const pathname = usePathname();
-  const isAuth = pathname === "/login" || pathname === "/signup";
+  const isAuth = pathname === "/login" || pathname === "/signup" || pathname === "/booking";
   if (pathname.startsWith("/dashboard") || isAuth) {
     return null;
   }
